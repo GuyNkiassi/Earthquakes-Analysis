@@ -21,20 +21,23 @@ var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/
   accessToken: mapKey
 });
 
-//mapbox://styles/mapbox/satellite-v9
-
 let map = L.map("map", {
   center: [
     0, 10
   ],
   zoom: 3,
-  layers:[streetmap,darkmap,satellite]
+  layers:[streetmap]
 });
 
+let earthquake = new L.LayerGroup();
+let tectonicplates = new L.LayerGroup();
+
+let overlays = {tectonicplates,"Major Earthquakes":earthquake};
+let baseMaps = {streetmap,darkmap,satellite};
+
+L.control.layers(baseMaps,overlays).addTo(map);
 streetmap.addTo(map);
 
-let tectonicplates = new L.LayerGroup();
-let earthquake = new L.LayerGroup();
 
 d3.json('https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json').then(data => {
   x = data;
@@ -106,3 +109,33 @@ d3.json('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geoj
 
   earthquake.addTo(map);
 })
+
+let legend = L.control({ position: "bottomright" });
+
+// Then add all the details for the legend
+legend.onAdd = function() {
+  let div = L.DomUtil.create("div", "info legend");
+
+  div.innerHTML += '<h2>Depth</h2>';
+
+  const magnitudes = ['90+','70','50','30','10<'];
+  const colors = [
+    "#ea2c2c",
+    "#ea822c",
+    "#ee9c00",
+    "#eecc00",
+    "#d4ee00",
+    "#98ee00",
+  ];
+
+  for (var i = 0; i < magnitudes.length; i++) {
+    console.log(colors[i]);
+    div.innerHTML +=
+      "<h4 style='background: " + colors[i] + "'>"
+      + magnitudes[i] + "<br>" 
+      + "</h4>"
+    }
+    return div;
+  };
+
+  legend.addTo(map);
