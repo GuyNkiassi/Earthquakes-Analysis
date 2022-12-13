@@ -8,6 +8,6 @@
     . The legend gives a good look on the map to show the magnitude of the earthquakes 
 
 
-    . The legend and the size of the circle
+    . The legend and the size of the circle to show how small or big the earthquakes size actally is.
 
 ![Application Image](./assets/images/application.png)
